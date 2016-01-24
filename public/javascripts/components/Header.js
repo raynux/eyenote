@@ -28,7 +28,7 @@ export default React.createClass({
         <Nav pullRight>
           <NavItem>
             <WebAudioController />
-            <Button onClick={captureOnClick} active={this.state.vision.interval}>
+            <Button onClick={captureOnClick} active={this.state.vision.interval != null}>
               <Glyphicon glyph="camera" /> Capture
             </Button>
           </NavItem>

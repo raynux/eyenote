@@ -11,14 +11,13 @@ export default React.createClass({
   mixins: [Reflux.connect(AudioStore, 'audio')],
 
   render() {
+    const buttonOnClick = this.state.audio.playing ? AudioAction.stop : AudioAction.start;
+
     return (
       <ButtonGroup>
-        {(() => {
-          if(this.state.audio.playing) {
-            return (<Button onClick={AudioAction.stop}><Glyphicon glyph="stop" /> Stop</Button>);
-          }
-          return (<Button onClick={AudioAction.start}><Glyphicon glyph="play" /> Play</Button>);
-        })()}
+        <Button onClick={buttonOnClick} active={this.state.audio.playing}>
+          <Glyphicon glyph="volume-up" /> Theremin
+        </Button>
       </ButtonGroup>
     )
   }
