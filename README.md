@@ -3,7 +3,7 @@ Theremin with your tilt-angle of your face
 
 # Prepare
 
-You need a Google API key which[CLOUD VISION API](https://cloud.google.com/vision/) is enabled with.
+You need a Google API key which [CLOUD VISION API](https://cloud.google.com/vision/) is enabled with.
 
 
 # Install
