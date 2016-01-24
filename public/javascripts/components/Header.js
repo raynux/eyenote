@@ -18,6 +18,8 @@ export default React.createClass({
   stopCapture() { this.eventEmitter('emit', 'StopCapture') },
 
   render() {
+    const captureOnClick = this.state.vision.interval ? this.stopCapture : this.startCapture;
+
     return (
       <Navbar inverse={false} fixedTop={true}>
         <Navbar.Header>
@@ -26,14 +28,9 @@ export default React.createClass({
         <Nav pullRight>
           <NavItem>
             <WebAudioController />
-            {(() => {
-              if(this.state.vision.interval) {
-                return (<Button onClick={this.stopCapture}><Glyphicon glyph="stop" /> Pause</Button>)
-              }
-              else {
-                return (<Button onClick={this.startCapture}><Glyphicon glyph="camera" /> Capture</Button>)
-              }
-            })()}
+            <Button onClick={captureOnClick} active={this.state.vision.interval}>
+              <Glyphicon glyph="camera" /> Capture
+            </Button>
           </NavItem>
         </Nav>
       </Navbar>
