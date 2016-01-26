@@ -24,7 +24,8 @@
     "reflux": "^0.3.0",
     "serve-favicon": "~2.3.0",
     "superagent": "^1.6.1",
-    "superagent-as-promised": "^3.2.1"
+    "superagent-as-promised": "^3.2.1",
+    "xhr-request": "^1.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.3.26",
