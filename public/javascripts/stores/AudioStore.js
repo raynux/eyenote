@@ -41,6 +41,15 @@ export default Reflux.createStore({
     this.trigger(this.res);
   },
 
+  fire() {
+    const source = this.res.context.createBufferSource();
+    source.buffer = this.res.audio[0].buffer;
+    source.loop = true;
+    source.loopEnd = this.res.audio[0].buffer.duration;
+    source.connect(this.res.context.destination);
+    source.start();
+  },
+
   init() {
     this.res.context = new AudioContext();
 
@@ -65,7 +74,7 @@ export default Reflux.createStore({
       return new Promise((resolve, reject) => {
         request(`/audio/${type}${num}.mp3`, {responseType: 'arraybuffer'}, (err, data) => {
           this.res.context.decodeAudioData(data, (audioBuffer) => {
-            resolve({name: `${type}${num}`, audioBuffer: audioBuffer});
+            resolve({name: `${type}${num}`, buffer: audioBuffer});
           }, (error) => { reject(error); })
         })
       })
