@@ -21,7 +21,7 @@ export default React.createClass({
       .take(1)
       .value()[0];
 
-    if(current) {
+    if(current && !_.isEmpty(current.faceAnnotations)) {
       AudioAction.setFrequency(
         100 * _.floor(Math.abs(current.faceAnnotations[0].tiltAngle))
       );
