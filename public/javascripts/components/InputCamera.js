@@ -19,7 +19,7 @@ export default React.createClass({
       const interval = setInterval(() => {
         const base64Image = this.refs.webcam.getScreenshot().split(',')[1];
         VisionAction.submit(base64Image);
-      }, 1200);
+      }, 2000);
 
       VisionAction.setTimer(interval);
     });
@@ -31,7 +31,7 @@ export default React.createClass({
 
   render() {
     return (
-      <Webcam style={{display: 'none'}} width={485} audio={false} ref='webcam' screenshotFormat='image/jpeg' />
+      <Webcam style={{display: 'none'}} width={550} audio={false} ref='webcam' screenshotFormat='image/jpeg' />
     )
   }
 })

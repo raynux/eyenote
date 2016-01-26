@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import React from 'react';
 import Reflux from 'reflux';
-import {Grid, Row, Col} from 'react-bootstrap';
+import {Row, Col, Panel} from 'react-bootstrap';
 
 import AudioAction from '../actions/AudioAction';
 import AudioStore from '../stores/AudioStore';
@@ -12,38 +12,38 @@ export default React.createClass({
 
   render() {
     return (
-      <div>
+      <div style={{marginTop: 40}}>
         <Row>
           <Col xs={4} className="text-center">
-            1
+            <Panel>x</Panel>
           </Col>
           <Col xs={4} className="text-center">
-            2
+            <Panel>x</Panel>
           </Col>
           <Col xs={4} className="text-center">
-            3
+            <Panel>x</Panel>
           </Col>
         </Row>
         <Row>
           <Col xs={4} className="text-center">
-            4
+            <Panel>x</Panel>
           </Col>
           <Col xs={4} className="text-center">
-            5
+            <Panel>x</Panel>
           </Col>
           <Col xs={4} className="text-center">
-            6
+            <Panel>x</Panel>
           </Col>
         </Row>
         <Row>
           <Col xs={4} className="text-center">
-            7
-          </Col>
-          <Col xs={4} className="text-center" style={{backgroundColor: '#333'}}>
-            8
+            <Panel>DRUM-A</Panel>
           </Col>
           <Col xs={4} className="text-center">
-            9
+            <Panel>DRUM-B</Panel>
+          </Col>
+          <Col xs={4} className="text-center">
+            <Panel>DRUM-C</Panel>
           </Col>
         </Row>
       </div>

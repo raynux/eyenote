@@ -20,7 +20,9 @@ export default React.createClass({
     let responseView = null
     if(! _.isEmpty(this.state.vision.results)) {
       responseView = (
-        <pre>{JSON.stringify(_.last(this.state.vision.results), null, 2)}</pre>
+        <pre style={{color: '#ccc', backgroundColor: '#333'}}>
+          {JSON.stringify(_.last(this.state.vision.results), null, 2)}
+        </pre>
       );
     }
 
