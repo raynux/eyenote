@@ -9,6 +9,7 @@ import VisionStore from '../stores/VisionStore';
 import Header from './Header';
 import InputCamera from './InputCamera';
 import LabelView from './LabelsView';
+import AudioPad from './AudioPad';
 import WebAudio from './WebAudio';
 
 
@@ -30,8 +31,11 @@ export default React.createClass({
 
         <Grid style={{marginTop: 70}}>
           <Row style={{marginBottom: 10}}>
-            <Col xs={12} md={12} className="text-center">
-              <div><InputCamera /></div>
+            <Col xs={6} md={6}>
+              <InputCamera />
+            </Col>
+            <Col xs={6} md={6} className="text-center">
+              <AudioPad />
             </Col>
           </Row>
           <Row>

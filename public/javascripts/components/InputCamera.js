@@ -31,9 +31,7 @@ export default React.createClass({
 
   render() {
     return (
-      <div>
-        <Webcam style={{display: 'none'}} width={800} audio={false} ref='webcam' screenshotFormat='image/jpeg' />
-      </div>
+      <Webcam style={{display: 'none'}} width={485} audio={false} ref='webcam' screenshotFormat='image/jpeg' />
     )
   }
 })
