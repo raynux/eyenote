@@ -41,7 +41,19 @@ export default Reflux.createStore({
     this.trigger(this.res)
   },
 
-  startTrack(trackName) {
+  startTrack(trackName, option={exclude: null}) {
+    // Stop tracks that matches the "exclude" (RegExp)
+    if(!_.isNull(option.exclude)) {
+      _(this.res.tracks)
+      .filter((t) => {
+        if(_.isEqual(t.name, trackName)){ return false }
+        return t.name.match(option.exclude)
+      })
+      .each((t) => { this.stopTrack(t.name) })
+      .value()
+    }
+
+    // Go!
     const track = _.find(this.res.tracks, {name: trackName})
     if(track.isConnected) {
       track.source.disconnect(this.res.context.destination)

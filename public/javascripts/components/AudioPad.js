@@ -7,20 +7,30 @@ import {Row, Col, Panel, Button} from 'react-bootstrap'
 import AudioAction from '../actions/AudioAction'
 import AudioStore from '../stores/AudioStore'
 
-export default React.createClass({
+const PadCol = React.createClass({
   mixins: [Reflux.connect(AudioStore, 'audio')],
 
+  getDefaultProps() {
+    return {exclude: null}
+  },
 
-  padGenerator(trackName) {
-    const track = _.find(this.state.audio.tracks, {name: trackName})
+  startTrack() {
+    AudioAction.startTrack(this.props.trackName, {exclude: this.props.exclude})
+  },
+
+  stopTrack() {
+    AudioAction.stopTrack(this.props.trackName)
+  },
+
+  render() {
+    const track = _.find(this.state.audio.tracks, {name: this.props.trackName})
     if(_.isUndefined(track)) { return <Panel>Loading...</Panel> }
 
     if(track.isConnected) {
       return (
         <Col xs={4} className="text-center">
-          <Panel onClick={() => {AudioAction.stopTrack(trackName)}}
-                 style={{backgroundColor: '#339'}}>
-            {trackName}
+          <Panel onClick={this.stopTrack} style={{backgroundColor: '#339'}}>
+            {this.props.trackName}
           </Panel>
         </Col>
       )
@@ -28,26 +38,28 @@ export default React.createClass({
 
     return (
       <Col xs={4} className="text-center">
-        <Panel onClick={() => {AudioAction.startTrack(trackName)}}>
-          {trackName}
-        </Panel>
+        <Panel onClick={this.startTrack}>{this.props.trackName}</Panel>
       </Col>
     )
-  },
+  }
+})
+
+export default React.createClass({
+  mixins: [Reflux.connect(AudioStore, 'audio')],
 
   render() {
     return (
       <div style={{marginTop: 40}}>
         <Row>
-          {(() => {return this.padGenerator('se0')})()}
+          <PadCol trackName='se0' />
         </Row>
         <Row>
-          {(() => {return this.padGenerator('bass0')})()}
+          <PadCol trackName='bass0' />
         </Row>
         <Row>
-          {(() => {return this.padGenerator('drum0')})()}
-          {(() => {return this.padGenerator('drum1')})()}
-          {(() => {return this.padGenerator('drum2')})()}
+          <PadCol trackName='drum0' exclude={/drum/} />
+          <PadCol trackName='drum1' exclude={/drum/} />
+          <PadCol trackName='drum2' exclude={/drum/} />
         </Row>
       </div>
     )
