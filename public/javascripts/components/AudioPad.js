@@ -45,8 +45,6 @@ const PadCol = React.createClass({
 })
 
 export default React.createClass({
-  mixins: [Reflux.connect(AudioStore, 'audio')],
-
   render() {
     return (
       <div style={{marginTop: 40}}>
