@@ -24,7 +24,7 @@ const PadCol = React.createClass({
 
   render() {
     const track = _.find(this.state.audio.tracks, {name: this.props.trackName})
-    if(_.isUndefined(track)) { return <Panel>Loading...</Panel> }
+    if(_.isUndefined(track)) { return <div /> }
 
     if(track.isConnected) {
       return (

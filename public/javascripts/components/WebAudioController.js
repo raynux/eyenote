@@ -14,14 +14,9 @@ export default React.createClass({
     const buttonOnClick = this.state.audio.playing ? AudioAction.stop : AudioAction.start
 
     return (
-      <ButtonGroup>
-        <Button onClick={buttonOnClick} active={this.state.audio.playing}>
-          <Glyphicon glyph="volume-up" /> Theremin
-        </Button>
-        <Button onClick={AudioAction.fire} active={this.state.audio.playing}>
-          <Glyphicon glyph="headphones" /> FIRE!
-        </Button>
-      </ButtonGroup>
+      <Button onClick={buttonOnClick} active={this.state.audio.playing}>
+        <Glyphicon glyph="volume-up" /> Theremin
+      </Button>
     )
   }
 })

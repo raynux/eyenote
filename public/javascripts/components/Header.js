@@ -3,7 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import EventEmitterMixin from 'react-event-emitter-mixin'
-import {Button, Nav, Navbar, NavItem, Glyphicon} from 'react-bootstrap'
+import {ButtonGroup, Button, Nav, Navbar, NavItem, Glyphicon} from 'react-bootstrap'
 
 import WebAudioController from './WebAudioController'
 import VisionStore from '../stores/VisionStore'
@@ -27,10 +27,12 @@ export default React.createClass({
         </Navbar.Header>
         <Nav pullRight>
           <NavItem>
-            <WebAudioController />
-            <Button onClick={captureOnClick} active={this.state.vision.interval != null}>
-              <Glyphicon glyph="camera" /> Capture
-            </Button>
+            <ButtonGroup>
+              <WebAudioController />
+              <Button onClick={captureOnClick} active={this.state.vision.interval != null}>
+                <Glyphicon glyph="camera" /> Capture
+              </Button>
+            </ButtonGroup>
           </NavItem>
         </Nav>
       </Navbar>
