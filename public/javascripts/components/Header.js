@@ -5,8 +5,8 @@ import Reflux from 'reflux'
 import EventEmitterMixin from 'react-event-emitter-mixin'
 import {ButtonGroup, Button, Nav, Navbar, NavItem, Glyphicon} from 'react-bootstrap'
 
-import WebAudioController from './WebAudioController'
 import VisionStore from '../stores/VisionStore'
+import AudioAction from '../actions/AudioAction'
 
 export default React.createClass({
   mixins: [
@@ -28,7 +28,6 @@ export default React.createClass({
         <Nav pullRight>
           <NavItem>
             <ButtonGroup>
-              <WebAudioController />
               <Button onClick={captureOnClick} active={this.state.vision.interval != null}>
                 <Glyphicon glyph="camera" /> Capture
               </Button>

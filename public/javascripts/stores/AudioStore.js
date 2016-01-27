@@ -15,31 +15,14 @@ export default Reflux.createStore({
   listenables: [AudioAction],
 
   res: {
-    context: null,
-    oscNode: null,
-    gainNode: null,
-    playing: false,
     isLoading: false,
+    isFiltered: false,
     tracks: []
   },
 
-  start() {
-    this.res.playing = true
-    this.res.oscNode.connect(this.res.gainNode)
-    this.trigger(this.res)
-  },
-
-  stop() {
-    this.res.playing = false
-    this.res.oscNode.disconnect(this.res.gainNode)
-    this.trigger(this.res)
-  },
-
-  setFrequency(frequency) {
-    this.res.oscNode.frequency.value = frequency
-    console.log(`Current Frequency : ${this.res.oscNode.frequency.value}`)
-    this.trigger(this.res)
-  },
+  context: null,
+  destination: null,  // the last Node to be connected
+  biquadFilter: null,
 
   startTrack(trackName, option={exclude: null}) {
     // Stop tracks that matches the "exclude" (RegExp)
@@ -55,10 +38,8 @@ export default Reflux.createStore({
 
     // Go!
     const track = _.find(this.res.tracks, {name: trackName})
-    if(track.isConnected) {
-      track.source.disconnect(this.res.context.destination)
-    }
-    track.source.connect(this.res.context.destination)
+    if(track.isConnected) { track.source.disconnect() }
+    this.connectToOutput(track.source)
     track.isConnected = true
     this.trigger(this.res)
   },
@@ -66,34 +47,55 @@ export default Reflux.createStore({
   stopTrack(trackName) {
     const track = _.find(this.res.tracks, {name: trackName})
     if(track.isConnected) {
-      track.source.disconnect(this.res.context.destination)
+      track.source.disconnect()
       track.isConnected = false
       this.trigger(this.res)
     }
   },
 
+  toggleBiquadFilter() {
+    if(_.isEqual(this.destination, this.context.destination)) {
+      this.destination = this.biquadFilter
+      this.res.isFiltered = true
+    }
+    else {
+      this.destination = this.context.destination
+      this.res.isFiltered = false
+    }
+
+    _(this.res.tracks)
+    .filter({isConnected: true})
+    .each((track) => {
+      track.source.disconnect()
+      this.connectToOutput(track.source)
+    }).value()
+
+    this.trigger(this.res)
+  },
+
   init() {
-    this.res.context = new AudioContext()
-
-    this.res.oscNode = this.res.context.createOscillator()
-    this.res.oscNode.frequency.value = 300
-
-    this.res.gainNode = this.res.context.createGain()
-    this.res.gainNode.gain.value = 0.2
-
-    this.res.gainNode.connect(this.res.context.destination)
-    this.res.oscNode.start()
-
+    this.context = new AudioContext()
+    this.initBiquadFilter()
     this.loadTracks()
+    this.destination = this.context.destination
   },
 
-  getInitialState() {
-    return this.res
+  getInitialState() { return this.res },
+
+  initBiquadFilter() {
+    const filter = this.context.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.frequency.value = 2500
+    filter.connect(this.context.destination)
+
+    this.biquadFilter = filter
   },
+
+  connectToOutput(source) { source.connect(this.destination) },
 
   loadTracks() {
     const sourceGenerator = (audioBuffer) => {
-      const source = this.res.context.createBufferSource()
+      const source = this.context.createBufferSource()
       source.buffer = audioBuffer
       source.loop = true
       source.loopEnd = audioBuffer.duration
@@ -103,7 +105,7 @@ export default Reflux.createStore({
     const audioBufferFetcher = (type, num) => {
       return new Promise((resolve, reject) => {
         request(`/audio/${type}${num}.mp3`, {responseType: 'arraybuffer'}, (err, data) => {
-          this.res.context.decodeAudioData(data, (audioBuffer) => {
+          this.context.decodeAudioData(data, (audioBuffer) => {
             resolve({
               name: `${type}${num}`,
               buffer: audioBuffer,
@@ -128,7 +130,6 @@ export default Reflux.createStore({
     Promise.all(fetchers).then((results) => {
       _.each(results, (data) => {
         data.source.start()
-        data.source.isConnected = true
         this.res.tracks.push(data)
       })
       this.res.isLoading = true

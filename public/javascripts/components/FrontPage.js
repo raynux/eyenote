@@ -9,8 +9,8 @@ import VisionStore from '../stores/VisionStore'
 import Header from './Header'
 import InputCamera from './InputCamera'
 import LabelView from './LabelsView'
+import HeadStatus from './HeadStatus'
 import AudioPad from './AudioPad'
-import WebAudio from './WebAudio'
 
 
 export default React.createClass({
@@ -28,7 +28,6 @@ export default React.createClass({
 
     return (
       <div>
-        <WebAudio />
         <Header />
 
         <Grid style={{marginTop: 70}}>
@@ -38,6 +37,7 @@ export default React.createClass({
             </Col>
             <Col xs={6} md={6} className="text-center">
               <AudioPad />
+              <HeadStatus />
             </Col>
           </Row>
           <Row>
