@@ -1,11 +1,11 @@
-'use strict';
-import _ from 'lodash';
-import numeral from 'numeral';
-import React from 'react';
-import Reflux from 'reflux';
-import {Panel} from 'react-bootstrap';
+'use strict'
+import _ from 'lodash'
+import numeral from 'numeral'
+import React from 'react'
+import Reflux from 'reflux'
+import {Panel} from 'react-bootstrap'
 
-import VisionStore from '../stores/VisionStore';
+import VisionStore from '../stores/VisionStore'
 
 const FILTER_OBJECTS = [
   // 'hair',
@@ -15,14 +15,14 @@ const FILTER_OBJECTS = [
   // 'beard',
   // 'moustache'
 ]
-const SCORE_THRESHOLD = 0.5;
-const DISPLAY_ITEM_COUNT = 4;
+const SCORE_THRESHOLD = 0.5
+const DISPLAY_ITEM_COUNT = 4
 
 const DetectedItem = React.createClass({
   render() {
     const faces = _(this.props.item.faceAnnotations)
       .map((annot) => {
-        const key = `${annot.panAngle}-${annot.tiltAngle}-${annot.rollAngle}`;
+        const key = `${annot.panAngle}-${annot.tiltAngle}-${annot.rollAngle}`
         return (
           <div key={key}>Pan={annot.panAngle} / tilt={annot.tiltAngle} / roll={annot.rollAngle}</div>
         )
@@ -61,9 +61,9 @@ const DetectedItem = React.createClass({
       </Panel>
     )
   }
-});
+})
 
-const DISPLAY_GENERATION_COUNT = 6;
+const DISPLAY_GENERATION_COUNT = 6
 export default React.createClass({
   mixins: [Reflux.connect(VisionStore, 'vision')],
 
@@ -74,7 +74,7 @@ export default React.createClass({
       .take(DISPLAY_GENERATION_COUNT)
       .map((result, i) => {
         return (<DetectedItem key={`item-${i}`} item={result} />)
-      }).value();
+      }).value()
 
     return (<div>{detectedItems}</div>)
   }

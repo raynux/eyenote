@@ -1,16 +1,16 @@
-'use strict';
-import _ from 'lodash';
-import React from 'react';
-import Reflux from 'reflux';
-import {Panel, Grid, Row, Col, Button} from 'react-bootstrap';
+'use strict'
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
+import {Panel, Grid, Row, Col, Button} from 'react-bootstrap'
 
-import VisionStore from '../stores/VisionStore';
+import VisionStore from '../stores/VisionStore'
 
-import Header from './Header';
-import InputCamera from './InputCamera';
-import LabelView from './LabelsView';
-import AudioPad from './AudioPad';
-import WebAudio from './WebAudio';
+import Header from './Header'
+import InputCamera from './InputCamera'
+import LabelView from './LabelsView'
+import AudioPad from './AudioPad'
+import WebAudio from './WebAudio'
 
 
 export default React.createClass({
@@ -23,7 +23,7 @@ export default React.createClass({
         <pre style={{color: '#ccc', backgroundColor: '#333'}}>
           {JSON.stringify(_.last(this.state.vision.results), null, 2)}
         </pre>
-      );
+      )
     }
 
     return (

@@ -1,12 +1,12 @@
-'use strict';
-import React from 'react';
-import Reflux from 'reflux';
-import EventEmitterMixin from 'react-event-emitter-mixin';
-import {Button} from 'react-bootstrap';
-import Webcam from 'react-webcam';
+'use strict'
+import React from 'react'
+import Reflux from 'reflux'
+import EventEmitterMixin from 'react-event-emitter-mixin'
+import {Button} from 'react-bootstrap'
+import Webcam from 'react-webcam'
 
-import VisionAction from '../actions/VisionAction';
-import VisionStore from '../stores/VisionStore';
+import VisionAction from '../actions/VisionAction'
+import VisionStore from '../stores/VisionStore'
 
 export default React.createClass({
   mixins: [
@@ -17,16 +17,16 @@ export default React.createClass({
   componentDidMount() {
     this.eventEmitter('on', 'StartCapture', () => {
       const interval = setInterval(() => {
-        const base64Image = this.refs.webcam.getScreenshot().split(',')[1];
-        VisionAction.submit(base64Image);
-      }, 2000);
+        const base64Image = this.refs.webcam.getScreenshot().split(',')[1]
+        VisionAction.submit(base64Image)
+      }, 2000)
 
-      VisionAction.setTimer(interval);
-    });
+      VisionAction.setTimer(interval)
+    })
 
     this.eventEmitter('on', 'StopCapture', () => {
-      VisionAction.stopTimer();
-    });
+      VisionAction.stopTimer()
+    })
   },
 
   render() {

@@ -1,12 +1,12 @@
-'use strict';
-import _ from 'lodash';
-import React from 'react';
-import Reflux from 'reflux';
+'use strict'
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
 
-import VisionStore from '../stores/VisionStore';
-import AudioStore from '../stores/AudioStore';
+import VisionStore from '../stores/VisionStore'
+import AudioStore from '../stores/AudioStore'
 
-import AudioAction from '../actions/AudioAction';
+import AudioAction from '../actions/AudioAction'
 
 export default React.createClass({
   mixins: [
@@ -19,12 +19,12 @@ export default React.createClass({
       .flatten()  // ignore "batch" mode
       .reverse()
       .take(1)
-      .value()[0];
+      .value()[0]
 
     if(current && !_.isEmpty(current.faceAnnotations)) {
       AudioAction.setFrequency(
         100 * _.floor(Math.abs(current.faceAnnotations[0].tiltAngle))
-      );
+      )
     }
 
     return React.createElement('span')

@@ -1,11 +1,11 @@
-'use strict';
-import _ from 'lodash';
-import React from 'react';
-import Reflux from 'reflux';
-import {Row, Col, Panel} from 'react-bootstrap';
+'use strict'
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
+import {Row, Col, Panel} from 'react-bootstrap'
 
-import AudioAction from '../actions/AudioAction';
-import AudioStore from '../stores/AudioStore';
+import AudioAction from '../actions/AudioAction'
+import AudioStore from '../stores/AudioStore'
 
 export default React.createClass({
   mixins: [Reflux.connect(AudioStore, 'audio')],

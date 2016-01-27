@@ -1,12 +1,12 @@
-'use strict';
-import _ from 'lodash';
-import React from 'react';
-import Reflux from 'reflux';
-import EventEmitterMixin from 'react-event-emitter-mixin';
-import {Button, Nav, Navbar, NavItem, Glyphicon} from 'react-bootstrap';
+'use strict'
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
+import EventEmitterMixin from 'react-event-emitter-mixin'
+import {Button, Nav, Navbar, NavItem, Glyphicon} from 'react-bootstrap'
 
-import WebAudioController from './WebAudioController';
-import VisionStore from '../stores/VisionStore';
+import WebAudioController from './WebAudioController'
+import VisionStore from '../stores/VisionStore'
 
 export default React.createClass({
   mixins: [
@@ -18,7 +18,7 @@ export default React.createClass({
   stopCapture() { this.eventEmitter('emit', 'StopCapture') },
 
   render() {
-    const captureOnClick = this.state.vision.interval ? this.stopCapture : this.startCapture;
+    const captureOnClick = this.state.vision.interval ? this.stopCapture : this.startCapture
 
     return (
       <Navbar inverse={false} fixedTop={true}>
