@@ -5,7 +5,7 @@ import request from 'xhr-request'
 
 import AudioAction from '../actions/AudioAction'
 
-const AUDIO_DATA_CATALOG = [
+const TRACK_DATA_CATALOG = [
   {type: 'drum', size: 3},
   {type: 'bass', size: 1},
   {type: 'se',   size: 1}
@@ -20,7 +20,7 @@ export default Reflux.createStore({
     gainNode: null,
     playing: false,
     isLoading: false,
-    audio: []
+    tracks: []
   },
 
   start() {
@@ -41,9 +41,23 @@ export default Reflux.createStore({
     this.trigger(this.res)
   },
 
-  fire() {
-    this.res.audio[2].source.connect(this.res.context.destination)
-    this.res.audio[2].source.start()
+  startTrack(trackName) {
+    const track = _.find(this.res.tracks, {name: trackName})
+    if(track.isConnected) {
+      track.source.disconnect(this.res.context.destination)
+    }
+    track.source.connect(this.res.context.destination)
+    track.isConnected = true
+    this.trigger(this.res)
+  },
+
+  stopTrack(trackName) {
+    const track = _.find(this.res.tracks, {name: trackName})
+    if(track.isConnected) {
+      track.source.disconnect(this.res.context.destination)
+      track.isConnected = false
+      this.trigger(this.res)
+    }
   },
 
   init() {
@@ -58,33 +72,38 @@ export default Reflux.createStore({
     this.res.gainNode.connect(this.res.context.destination)
     this.res.oscNode.start()
 
-    this.loadAudioData()
+    this.loadTracks()
   },
 
   getInitialState() {
     return this.res
   },
 
-  loadAudioData() {
+  loadTracks() {
+    const sourceGenerator = (audioBuffer) => {
+      const source = this.res.context.createBufferSource()
+      source.buffer = audioBuffer
+      source.loop = true
+      source.loopEnd = audioBuffer.duration
+      return source
+    }
+
     const audioBufferFetcher = (type, num) => {
       return new Promise((resolve, reject) => {
         request(`/audio/${type}${num}.mp3`, {responseType: 'arraybuffer'}, (err, data) => {
           this.res.context.decodeAudioData(data, (audioBuffer) => {
-            const source = this.res.context.createBufferSource()
-            source.buffer = audioBuffer
-            source.loop = true
-            source.loopEnd = audioBuffer.duration
             resolve({
               name: `${type}${num}`,
               buffer: audioBuffer,
-              source: source
+              source: sourceGenerator(audioBuffer),
+              isConnected: false
             })
           }, (error) => { reject(error) })
         })
       })
     }
 
-    const fetchers = _(AUDIO_DATA_CATALOG)
+    const fetchers = _(TRACK_DATA_CATALOG)
     .map((catalog) => {
       return _(_.range(catalog.size)).map((num) => {
         return audioBufferFetcher(catalog.type, num)
@@ -93,8 +112,13 @@ export default Reflux.createStore({
     .flatten()
     .value()
 
+    // All loading done, so make them ready to connect
     Promise.all(fetchers).then((results) => {
-      _.each(results, (data) => { this.res.audio.push(data) })
+      _.each(results, (data) => {
+        data.source.start()
+        data.source.isConnected = true
+        this.res.tracks.push(data)
+      })
       this.res.isLoading = true
       this.trigger(this.res)
     })
