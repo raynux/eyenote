@@ -59,6 +59,7 @@ export default Reflux.createStore({
       const faceAnnotation = result[0].faceAnnotations[0]
       if(! _.isUndefined(faceAnnotation)) {
         this.analyzeHeadStatus(faceAnnotation)
+        this.applyEffect()
       }
       this.trigger(this.data)
     })
@@ -97,11 +98,15 @@ export default Reflux.createStore({
   },
 
   applyEffect() {
-    const isUp    = _.isEqual(status.tilt, VisionStore.POSITION.UP)
-    const isDown  = _.isEqual(status.tilt, VisionStore.POSITION.DOWN)
-    const isRight = _.isEqual(status.pan, VisionStore.POSITION.RIGHT)
-    const isLeft  = _.isEqual(status.pan, VisionStore.POSITION.LEFT)
+    const isUp        = _.isEqual(this.data.headStatus.tilt, this.POSITION.UP)
+    const isDown      = _.isEqual(this.data.headStatus.tilt, this.POSITION.DOWN)
+    const isPanRight  = _.isEqual(this.data.headStatus.pan,  this.POSITION.RIGHT)
+    const isPanLeft   = _.isEqual(this.data.headStatus.pan,  this.POSITION.LEFT)
+    const isRollRight = _.isEqual(this.data.headStatus.roll, this.POSITION.RIGHT)
+    const isRollLeft  = _.isEqual(this.data.headStatus.roll, this.POSITION.LEFT)
 
-
+    // Drums
+    if(isPanLeft) { AudioAction.startTrack('drum0', {exclude: /drum/}) }
+    else if(isPanRight) { AudioAction.startTrack('drum1', {exclude: /drum/}) }
   }
 })
