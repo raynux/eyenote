@@ -6,9 +6,9 @@ import request from 'xhr-request'
 import AudioAction from '../actions/AudioAction'
 
 const TRACK_DATA_CATALOG = [
-  {type: 'drum', size: 3},
-  {type: 'bass', size: 1},
-  {type: 'se',   size: 1}
+  {type: 'drum', size: 2},
+  {type: 'bass', size: 2},
+  {type: 'se',   size: 2}
 ]
 
 export default Reflux.createStore({
@@ -45,12 +45,17 @@ export default Reflux.createStore({
   },
 
   stopTrack(trackName) {
-    const track = _.find(this.res.tracks, {name: trackName})
-    if(track.isConnected) {
-      track.source.disconnect()
-      track.isConnected = false
-      this.trigger(this.res)
-    }
+    let tracks
+    if(_.isEqual(trackName, '*')) { tracks = this.res.tracks }
+    else { tracks = [_.find(this.res.tracks, {name: trackName})] }
+
+    _.each(tracks, (track) => {
+      if(track.isConnected) {
+        track.source.disconnect()
+        track.isConnected = false
+        this.trigger(this.res)
+      }
+    })
   },
 
   toggleBiquadFilter() {

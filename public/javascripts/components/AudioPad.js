@@ -64,14 +64,12 @@ export default React.createClass({
           </Col>
         </Row>
         <Row>
-          <PadCol trackName='se0' label='Sound Effect A'/>
-          <PadCol trackName='se0' label='Sound Effect B'/>
-          <PadCol trackName='drum1' label='Riff A' exclude={/drum/} />
+          <PadCol trackName='se0' label='Sound Effect A' exclude={/se/} />
+          <PadCol trackName='se1' label='Sound Effect B' exclude={/se/} />
         </Row>
         <Row>
-          <PadCol trackName='bass0' label='Bass Pattern A'/>
-          <PadCol trackName='bass0' label='Bass Pattern B'/>
-          <PadCol trackName='drum1' label='Riff B' exclude={/drum/} />
+          <PadCol trackName='bass0' label='Bass Pattern A' exclude={/bass/} />
+          <PadCol trackName='bass1' label='Bass Pattern B' exclude={/bass/}/>
         </Row>
         <Row>
           <PadCol trackName='drum0' label='Drum Pattern A' exclude={/drum/} />

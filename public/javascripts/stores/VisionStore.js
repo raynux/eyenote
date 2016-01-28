@@ -56,6 +56,13 @@ export default Reflux.createStore({
       const result = JSON.parse(res.text)
       this.data.results.push(result)
 
+      // No face detected
+      if(_.isEmpty(result[0].faceAnnotations)) {
+        this.trigger(this.data)
+        return
+      }
+
+      // Face detected
       const faceAnnotation = result[0].faceAnnotations[0]
       if(! _.isUndefined(faceAnnotation)) {
         this.analyzeHeadStatus(faceAnnotation)
@@ -97,6 +104,17 @@ export default Reflux.createStore({
     this.data.headStatus.pan  = this.getPosition(face.panAngle,  this.BOUNDARIES.pan)
   },
 
+  isFingerDetected() {
+    const labels = _(this.data.results)
+    .takeRight(1)
+    .flatten()
+    .thru((item) => { return _.first(item).labelAnnotations })
+    .map((label) => { return label.description })
+    .value()
+
+    return _.includes(labels, 'finger')
+  },
+
   applyEffect() {
     const isUp        = _.isEqual(this.data.headStatus.tilt, this.POSITION.UP)
     const isDown      = _.isEqual(this.data.headStatus.tilt, this.POSITION.DOWN)
@@ -108,5 +126,8 @@ export default Reflux.createStore({
     // Drums
     if(isPanLeft) { AudioAction.startTrack('drum0', {exclude: /drum/}) }
     else if(isPanRight) { AudioAction.startTrack('drum1', {exclude: /drum/}) }
+
+    // Low-pass filter by detecting "finger"
+    if(this.isFingerDetected()) { AudioAction.stopTrack('*') }
   }
 })
