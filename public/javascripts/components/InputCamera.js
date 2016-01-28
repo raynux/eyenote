@@ -8,6 +8,8 @@ import Webcam from 'react-webcam'
 import VisionAction from '../actions/VisionAction'
 import VisionStore from '../stores/VisionStore'
 
+const INTERVAL = 1200
+
 export default React.createClass({
   mixins: [
     EventEmitterMixin,
@@ -19,7 +21,7 @@ export default React.createClass({
       const interval = setInterval(() => {
         const base64Image = this.refs.webcam.getScreenshot().split(',')[1]
         VisionAction.submit(base64Image)
-      }, 2000)
+      }, 1200)
 
       VisionAction.setTimer(interval)
     })

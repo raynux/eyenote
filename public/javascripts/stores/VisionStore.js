@@ -106,7 +106,8 @@ export default Reflux.createStore({
 
   isFingerDetected() {
     const labels = _(this.data.results)
-    .takeRight(1)
+    .reverse()
+    .take(1)
     .flatten()
     .thru((item) => { return _.first(item).labelAnnotations })
     .map((label) => { return label.description })
