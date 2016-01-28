@@ -44,9 +44,15 @@ export default Reflux.createStore({
     this.trigger(this.res)
   },
 
+  // `trackName` has to be a string, regexp or '*'
   stopTrack(trackName) {
     let tracks
     if(_.isEqual(trackName, '*')) { tracks = this.res.tracks }
+    else if(_.isRegExp(trackName)) {
+      tracks = _(this.res.tracks)
+      .filter((t) => { return t.name.match(trackName) })
+      .value()
+    }
     else { tracks = [_.find(this.res.tracks, {name: trackName})] }
 
     _.each(tracks, (track) => {

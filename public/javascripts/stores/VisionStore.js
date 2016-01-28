@@ -53,21 +53,7 @@ export default Reflux.createStore({
     .post('/api/classify')
     .send({image: result})
     .then((res) => {
-      const result = JSON.parse(res.text)
-      this.data.results.push(result)
-
-      // No face detected
-      if(_.isEmpty(result[0].faceAnnotations)) {
-        this.trigger(this.data)
-        return
-      }
-
-      // Face detected
-      const faceAnnotation = result[0].faceAnnotations[0]
-      if(! _.isUndefined(faceAnnotation)) {
-        this.analyzeHeadStatus(faceAnnotation)
-        this.applyMoment()
-      }
+      this.onResultReceived(JSON.parse(res.text))
       this.trigger(this.data)
     })
     .catch((err) => { console.log(err) })
@@ -89,6 +75,28 @@ export default Reflux.createStore({
 
   getInitialState() { return this.data },
 
+  onResultReceived(result) {
+    this.data.results.push(result)
+
+    // Face detected
+    const faceAnnotations = result[0].faceAnnotations
+    if(! _.isUndefined(faceAnnotations)) {
+      this.analyzeHeadStatus(faceAnnotations[0])  // Only the first face
+      this.applyMoment()
+    }
+
+    // Label detected
+    const labelAnnotations = result[0].labelAnnotations
+    if(! _.isUndefined(labelAnnotations)) {
+      // Stop all tracks if "finger" detected
+      if(_.find(labelAnnotations, {description: 'finger'})) { AudioAction.stopTrack('*') }
+    }
+
+    // // Text detected
+    const textAnnotations = result[0].textAnnotations
+    if(! _.isUndefined(textAnnotations)) { this.applyText(textAnnotations) }
+  },
+
   getPosition(angle, boundaries) {
     const boundaryInfo = _.find(boundaries, (b) => {
       return _.inRange(angle, b.min, b.max)
@@ -102,18 +110,6 @@ export default Reflux.createStore({
     this.data.headStatus.tilt = this.getPosition(face.tiltAngle, this.BOUNDARIES.tilt)
     this.data.headStatus.roll = this.getPosition(face.rollAngle, this.BOUNDARIES.roll)
     this.data.headStatus.pan  = this.getPosition(face.panAngle,  this.BOUNDARIES.pan)
-  },
-
-  isFingerDetected() {
-    const labels = _(this.data.results)
-    .reverse()
-    .take(1)
-    .flatten()
-    .thru((item) => { return _.first(item).labelAnnotations })
-    .map((label) => { return label.description })
-    .value()
-
-    return _.includes(labels, 'finger')
   },
 
   applyMoment() {
@@ -132,11 +128,16 @@ export default Reflux.createStore({
     if(isPanLeft) { AudioAction.startTrack('bass0', {exclude: /bass/}) }
     else if(isPanRight) { AudioAction.startTrack('bass1', {exclude: /bass/}) }
 
-    //SE
+    // SE
     if(isRollLeft) { AudioAction.startTrack('se0', {exclude: /se/}) }
     else if(isRollRight) { AudioAction.startTrack('se1', {exclude: /se/}) }
+  },
 
-    // Low-pass filter by detecting "finger"
-    if(this.isFingerDetected()) { AudioAction.stopTrack('*') }
+  applyText(annotations) {
+    _.each(annotations, (a) => {
+      if(a.description.match(/NO SE/)) { AudioAction.stopTrack(/se/) }
+      if(a.description.match(/NO BASS/)) { AudioAction.stopTrack(/bass/) }
+      if(a.description.match(/NO DRUM/)) { AudioAction.stopTrack(/drum/) }
+    })
   }
 })
