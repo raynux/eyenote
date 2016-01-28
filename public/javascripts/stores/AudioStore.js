@@ -11,6 +11,8 @@ const TRACK_DATA_CATALOG = [
   {type: 'se',   size: 2}
 ]
 
+const DEFAULT_GAIN = 40
+
 export default Reflux.createStore({
   listenables: [AudioAction],
 
@@ -38,9 +40,7 @@ export default Reflux.createStore({
 
     // Go!
     const track = _.find(this.res.tracks, {name: trackName})
-    if(track.isConnected) { track.source.disconnect() }
-    this.connectToOutput(track.source)
-    track.isConnected = true
+    track.gain.gain.value = DEFAULT_GAIN
     this.trigger(this.res)
   },
 
@@ -50,11 +50,8 @@ export default Reflux.createStore({
     else { tracks = [_.find(this.res.tracks, {name: trackName})] }
 
     _.each(tracks, (track) => {
-      if(track.isConnected) {
-        track.source.disconnect()
-        track.isConnected = false
-        this.trigger(this.res)
-      }
+      track.gain.gain.value = 0
+      this.trigger(this.res)
     })
   },
 
@@ -69,10 +66,9 @@ export default Reflux.createStore({
     }
 
     _(this.res.tracks)
-    .filter({isConnected: true})
     .each((track) => {
-      track.source.disconnect()
-      this.connectToOutput(track.source)
+      track.gain.disconnect()
+      track.gain.connect(this.destination)
     }).value()
 
     this.trigger(this.res)
@@ -90,13 +86,11 @@ export default Reflux.createStore({
   initBiquadFilter() {
     const filter = this.context.createBiquadFilter()
     filter.type = 'lowpass'
-    filter.frequency.value = 2500
+    filter.frequency.value = 2200
     filter.connect(this.context.destination)
 
     this.biquadFilter = filter
   },
-
-  connectToOutput(source) { source.connect(this.destination) },
 
   loadTracks() {
     const sourceGenerator = (audioBuffer) => {
@@ -107,15 +101,20 @@ export default Reflux.createStore({
       return source
     }
 
-    const audioBufferFetcher = (type, num) => {
+    const trackLoader = (type, num) => {
       return new Promise((resolve, reject) => {
         request(`/audio/${type}${num}.mp3`, {responseType: 'arraybuffer'}, (err, data) => {
           this.context.decodeAudioData(data, (audioBuffer) => {
+            const source = sourceGenerator(audioBuffer)
+            const gain = this.context.createGain()
+            gain.gain.value = 0
+            source.connect(gain)
+
             resolve({
               name: `${type}${num}`,
               buffer: audioBuffer,
-              source: sourceGenerator(audioBuffer),
-              isConnected: false
+              source: source,
+              gain: gain
             })
           }, (error) => { reject(error) })
         })
@@ -125,7 +124,7 @@ export default Reflux.createStore({
     const fetchers = _(TRACK_DATA_CATALOG)
     .map((catalog) => {
       return _(_.range(catalog.size)).map((num) => {
-        return audioBufferFetcher(catalog.type, num)
+        return trackLoader(catalog.type, num)
       }).value()
     })
     .flatten()
@@ -133,9 +132,10 @@ export default Reflux.createStore({
 
     // All loading done, so make them ready to connect
     Promise.all(fetchers).then((results) => {
-      _.each(results, (data) => {
-        data.source.start()
-        this.res.tracks.push(data)
+      _.each(results, (track) => {
+        track.gain.connect(this.destination)
+        track.source.start()
+        this.res.tracks.push(track)
       })
       this.res.isLoading = true
       this.trigger(this.res)

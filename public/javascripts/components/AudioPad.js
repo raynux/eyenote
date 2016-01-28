@@ -32,19 +32,19 @@ const PadCol = React.createClass({
     const track = _.find(this.state.audio.tracks, {name: this.props.trackName})
     if(_.isUndefined(track)) { return <div /> }
 
-    if(track.isConnected) {
+    if(track.gain.gain.value == 0) {    // Muted
       return (
         <Col xs={4} className="text-center">
-          <Panel onClick={this.stopTrack} style={ActiveStyle}>
-            {this.props.label}
-          </Panel>
+          <Panel onClick={this.startTrack}>{this.props.label}</Panel>
         </Col>
       )
     }
 
     return (
       <Col xs={4} className="text-center">
-        <Panel onClick={this.startTrack}>{this.props.label}</Panel>
+        <Panel onClick={this.stopTrack} style={ActiveStyle}>
+          {this.props.label}
+        </Panel>
       </Col>
     )
   }
