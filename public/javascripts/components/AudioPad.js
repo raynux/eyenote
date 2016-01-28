@@ -53,6 +53,8 @@ const PadCol = React.createClass({
 export default React.createClass({
   mixins: [Reflux.connect(AudioStore, 'audio')],
 
+  toggleFilter() { AudioAction.setLowPassFilter(!this.state.audio.isFiltered) },
+
   render() {
     const lowPassStyle = this.state.audio.isFiltered ? ActiveStyle2 : {}
 
@@ -75,7 +77,7 @@ export default React.createClass({
           <PadCol trackName='drum0' label='Drum Pattern A' exclude={/drum/} />
           <PadCol trackName='drum1' label='Drum Pattern B' exclude={/drum/} />
           <Col xs={4}>
-            <Panel onClick={AudioAction.toggleBiquadFilter} style={lowPassStyle}>Low Pass</Panel>
+            <Panel onClick={this.toggleFilter} style={lowPassStyle}>Low Pass</Panel>
           </Col>
         </Row>
       </div>

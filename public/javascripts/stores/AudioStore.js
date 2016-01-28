@@ -61,8 +61,9 @@ export default Reflux.createStore({
     })
   },
 
-  toggleBiquadFilter() {
-    if(_.isEqual(this.destination, this.context.destination)) {
+  // val = Boolean
+  setLowPassFilter(val) {
+    if(val) {
       this.destination = this.biquadFilter
       this.res.isFiltered = true
     }

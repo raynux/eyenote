@@ -78,9 +78,13 @@ export default Reflux.createStore({
   onResultReceived(result) {
     this.data.results.push(result)
 
-    // Face detected
+    // Face detected or not
     const faceAnnotations = result[0].faceAnnotations
-    if(! _.isUndefined(faceAnnotations)) {
+    if(_.isUndefined(faceAnnotations)) {
+      AudioAction.setLowPassFilter(true)
+    }
+    else {
+      AudioAction.setLowPassFilter(false)
       this.analyzeHeadStatus(faceAnnotations[0])  // Only the first face
       this.applyMoment()
     }
