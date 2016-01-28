@@ -66,7 +66,7 @@ export default Reflux.createStore({
       const faceAnnotation = result[0].faceAnnotations[0]
       if(! _.isUndefined(faceAnnotation)) {
         this.analyzeHeadStatus(faceAnnotation)
-        this.applyEffect()
+        this.applyMoment()
       }
       this.trigger(this.data)
     })
@@ -115,7 +115,7 @@ export default Reflux.createStore({
     return _.includes(labels, 'finger')
   },
 
-  applyEffect() {
+  applyMoment() {
     const isUp        = _.isEqual(this.data.headStatus.tilt, this.POSITION.UP)
     const isDown      = _.isEqual(this.data.headStatus.tilt, this.POSITION.DOWN)
     const isPanRight  = _.isEqual(this.data.headStatus.pan,  this.POSITION.RIGHT)
@@ -123,9 +123,17 @@ export default Reflux.createStore({
     const isRollRight = _.isEqual(this.data.headStatus.roll, this.POSITION.RIGHT)
     const isRollLeft  = _.isEqual(this.data.headStatus.roll, this.POSITION.LEFT)
 
-    // Drums
-    if(isPanLeft) { AudioAction.startTrack('drum0', {exclude: /drum/}) }
-    else if(isPanRight) { AudioAction.startTrack('drum1', {exclude: /drum/}) }
+    // Drum
+    if(isUp) { AudioAction.startTrack('drum0', {exclude: /drum/}) }
+    else if(isDown) { AudioAction.startTrack('drum1', {exclude: /drum/}) }
+
+    // Bass
+    if(isPanLeft) { AudioAction.startTrack('bass0', {exclude: /bass/}) }
+    else if(isPanRight) { AudioAction.startTrack('bass1', {exclude: /bass/}) }
+
+    //SE
+    if(isRollLeft) { AudioAction.startTrack('se0', {exclude: /se/}) }
+    else if(isRollRight) { AudioAction.startTrack('se1', {exclude: /se/}) }
 
     // Low-pass filter by detecting "finger"
     if(this.isFingerDetected()) { AudioAction.stopTrack('*') }
