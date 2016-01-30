@@ -5,6 +5,7 @@ const favicon      = require('serve-favicon')
 const logger       = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser   = require('body-parser')
+const basicAuth    = require('basic-auth-connect')
 // const corser       = require('corser')
 
 const app = express()
@@ -22,6 +23,12 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 // app.use(corser.create())
 
+// Basic Auth
+if(process.env.BASIC_AUTH_USERNAME && process.env.BASIC_AUTH_PASSWORD) {
+  app.use(basicAuth(process.env.BASIC_AUTH_USERNAME, process.env.BASIC_AUTH_PASSWORD))
+}
+
+// Route
 app.use('/',    require('./routes/index'))
 app.use('/api', require('./routes/api'))
 
