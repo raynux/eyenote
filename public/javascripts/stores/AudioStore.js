@@ -17,7 +17,7 @@ export default Reflux.createStore({
   listenables: [AudioAction],
 
   res: {
-    isLoading: false,
+    isLoading: true,
     isFiltered: false,
     tracks: []
   },
@@ -144,7 +144,7 @@ export default Reflux.createStore({
         track.source.start()
         this.res.tracks.push(track)
       })
-      this.res.isLoading = true
+      this.res.isLoading = false
       this.trigger(this.res)
     })
     .catch((err) => { console.error(err) })

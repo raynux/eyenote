@@ -56,7 +56,10 @@ export default Reflux.createStore({
       this.onResultReceived(JSON.parse(res.text))
       this.trigger(this.data)
     })
-    .catch((err) => { console.log(err) })
+    .catch((err, res) => {
+      console.error(err)
+      console.info(res)
+    })
   },
 
   setTimer(interval) {
